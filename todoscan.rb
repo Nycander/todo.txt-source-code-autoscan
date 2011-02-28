@@ -1,7 +1,7 @@
 require 'yaml'
 
 class Todoscan
-	@@debug = true
+	@@debug = false
 
 	def initialize(directory = ".")
 		@tasks = Array.new
@@ -73,7 +73,7 @@ tags:               ['code-$fileextension']
 # Define exclusions here. All exclusions are regular expressions.
 # 'files' is an array of filenames only, 'dirs' are directory names and 'paths' matches full paths.
 exclude:
-    files:          []
+    files:          ['^todoscan.rb$']
     dirs:           ['.git$', '.svn$']
     paths:          []
 # Inclusions go here. Only files which matches these patterns will be included.
