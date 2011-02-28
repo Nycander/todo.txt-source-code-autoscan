@@ -1,8 +1,25 @@
 require 'yaml'
 
-class Todoscan
-	@@debug = false
+# The Todoscan program scans directory for TODO-annotations within any specified
+# file. When first run, it will create a config file in the current directory,
+# use it to configure the programs behaviour.
+# 
+# This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+class Todoscan
+	@@debug = false		# Set to true if you want to see progress
+
+	# Initializes the todo scanner with the correct environment
 	def initialize(directory = ".")
 		@tasks = Array.new
 		@configfile = "todo.cfg.yml"
@@ -14,18 +31,22 @@ class Todoscan
 		@regex = /(#{keywordMatch}):\s+(.*?)$/i
 	end
 
+	# Runs the program itself
 	def run()
 		@tasks = getExistingTasks unless @config['force_overwrite']
 
 		writemode = @config['force_overwrite'] ? "w" : "a+"
 		@out = File.open(@config['filename'], writemode) if @config['filename']
 
+		# Scan all directories recursively and output all tasks
 		scandir(@directory)
 
 		puts "" if @@debug
 
+		# Close the file
 		@out.close if @config['filename']
 
+		# If specified, print the result
 		printTodo if @config['print_result']
 	end
 
@@ -46,6 +67,9 @@ class Todoscan
 			file << "
 # The filename of the todo file, comment the follow line if no file should be written to.
 filename:           'todo.txt'
+
+# Set to true if subdirs should be scanned
+recursive:          true
 
 # Todo-keywords are listed here, they are mapped to a priority (you can opt out by specifying an empty string)
 todo_notations:
@@ -89,7 +113,7 @@ include:
 		return YAML.load_file(filename)
 	end
 
-
+	# Tries to read and parse existing tasks in the todo.txt
 	def getExistingTasks()
 		tasks = Array.new
 
@@ -110,6 +134,31 @@ include:
 		return tasks
 	end
 
+	# Scans a directory for files containing the todo notations.
+	def scandir(dir)
+		Dir.new(dir).entries.each do | filename |
+			path = dir+"/"+filename
+			print "." if @@debug
+			next unless valid_path?(path)
+
+			if File.directory? path
+				scandir(path) if @config['recursive']
+				next
+			end
+
+			file = File.open(path, "r")
+			lines = file.readlines();
+			print "[" if @@debug
+			lines.each_with_index do | line, linenumber |
+				todo = line.match(@regex)
+				writeEntry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
+				print "!" if @@debug and todo
+			end
+			print "]" if @@debug
+		end
+	end
+
+	# Returns true a certain path is valid according to the configured rules.
 	def valid_path?(path)
 		if File.directory? path
 			dirname = File.basename(path)
@@ -129,30 +178,7 @@ include:
 		return true
 	end
 
-	def scandir(dir)
-		#puts "Scanning directory '#{dir}'..."
-		Dir.new(dir).entries.each do | filename |
-			path = dir+"/"+filename
-			print "." if @@debug
-			next unless valid_path?(path)
-
-			if File.directory? path
-				scandir(path) unless @config['exclude']['dirs'] and excluded?(filename, @config['exclude']['dirs'])
-				next
-			end
-
-			file = File.open(path, "r")
-			lines = file.readlines();
-			print "[" if @@debug
-			lines.each_with_index do | line, linenumber |
-				todo = line.match(@regex)
-				writeEntry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
-				print "!" if @@debug and todo
-			end
-			print "]" if @@debug
-		end
-	end
-
+	# Returns true if a filename is included by the given exclusion rules
 	def excluded? (filename, excludes)
 		excludes.each do | pattern |
 			return true if filename.match(pattern)
@@ -160,6 +186,7 @@ include:
 		return false
 	end
 
+	# Returns true if a filename is included by the given inclusion rules
 	def included? (filename, includes)
 		includes.each do | pattern |
 			return true if filename.match(pattern)
@@ -167,7 +194,8 @@ include:
 		return false
 	end
 
-	# https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
+	# Write a todo.txt-compliant entry to the file stored in @out.
+	# For the format spec, see https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
 	def writeEntry(task, location, line, priority)
 		return if @tasks.include? task
 
