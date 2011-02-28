@@ -50,6 +50,7 @@ class Todoscan
 		printTodo if @config['print_result']
 	end
 
+	# TO-DO: Comment printTodo
 	def printTodo()
 		f = File.open(@config['filename'], "r")
 		lines = f.readlines()
@@ -61,6 +62,7 @@ class Todoscan
 
 	private
 
+	# TO-DO: Comment loadConfig
 	def loadConfig(filename = "todo.cfg.yml")
 		unless File.exists? filename
 			file = File.open(filename, "w") 
@@ -224,6 +226,6 @@ include:
 	end
 end
 
-# TO-DO: Support command-line arguments (such as specifying config-file location)
+# FIX-ME: Support command-line arguments (such as specifying config-file location)
 s = Todoscan.new
 s.run

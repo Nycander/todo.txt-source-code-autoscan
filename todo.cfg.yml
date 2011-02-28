@@ -15,14 +15,15 @@ print_result:       true
 
 # If true the todo file will be overwritten everytime this file is run.
 # If false it will try to detect what todo's already exists and only add new ones
-force_overwrite:    true
+force_overwrite:    false
 
 # Tags each line with the name of the current directory, compliant with the todo.txt standard.
 tag_with_project:   false
 
-# Regexp rules for replacing naming the location of the task see http://www.ruby-doc.org/core/classes/String.html#M001186 for more information.
+# Regexp rules for replacing naming the location of the task.
+# See http://www.ruby-doc.org/core/classes/String.html#M001186 for more information.
 # Macros: $line
-location_pattern:   ['^.*?/([^/]+/)?([^/]+)$', '...\1\2:$line']
+location_pattern:   ['^.*?/([^/]+)$', '\1:$line']
 
 # Define any tags here, defined macros are $filename, $directory, $fileextension
 # Note: Spaces ( ) will be replaced by dashes (-)
