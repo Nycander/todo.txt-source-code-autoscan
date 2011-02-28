@@ -1,4 +1,4 @@
-# Todo.txt Autoscan Utility for Source Code
+# Todo.txt Autoscan Utility
 
 ## Example session
 
