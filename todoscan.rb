@@ -17,56 +17,56 @@ require 'yaml'
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Todoscan
-	@@debug = false		# Set to true if you want to see progress
+  @@debug = false    # Set to true if you want to see progress
 
-	# Initializes the todo scanner with the correct environment
-	def initialize(directory = ".")
-		@tasks = Array.new
-		@configfile = "todo.cfg.yml"
-		@config = loadConfig(@configfile)
-		@directory = directory
-		@out = $stdout
+  # Initializes the todo scanner with the correct environment
+  def initialize(directory = ".")
+    @tasks = Array.new
+    @configfile = "todo.cfg.yml"
+    @config = load_config(@configfile)
+    @directory = directory
+    @out = $stdout
 
-		keywordMatch = @config['todo_notations'].keys.join("|")
-		@regex = /(#{keywordMatch}):\s+(.*?)$/i
-	end
+    keyword_match = @config['todo_notations'].keys.join("|")
+    @regex = /(#{keyword_match}):\s+(.*?)$/i
+  end
 
-	# Runs the program itself
-	def run()
-		@tasks = getExistingTasks unless @config['force_overwrite']
+  # Runs the program itself
+  def run
+    @tasks = get_existing_tasks unless @config['force_overwrite']
 
-		writemode = @config['force_overwrite'] ? "w" : "a+"
-		@out = File.open(@config['filename'], writemode) if @config['filename']
+    writemode = @config['force_overwrite'] ? "w" : "a+"
+    @out = File.open(@config['filename'], writemode) if @config['filename']
 
-		# Scan all directories recursively and output all tasks
-		scandir(@directory)
+    # Scan all directories recursively and output all tasks
+    scandir(@directory)
 
-		puts "" if @@debug
+    puts "" if @@debug
 
-		# Close the file
-		@out.close if @config['filename']
+    # Close the file
+    @out.close if @config['filename']
 
-		# If specified, print the result
-		printTodo if @config['print_result']
-	end
+    # If specified, print the result
+    print_todo if @config['print_result']
+  end
 
-	# TO-DO: Comment printTodo
-	def printTodo()
-		f = File.open(@config['filename'], "r")
-		lines = f.readlines()
-		lines.each do | line |
-			puts line
-		end
-		f.close
-	end
+  # TO-DO: Comment print_todo
+  def print_todo
+    f = File.open(@config['filename'], "r")
+    lines = f.readlines()
+    lines.each do | line |
+      puts line
+    end
+    f.close
+  end
 
-	private
+  private
 
-	# TO-DO: Comment loadConfig
-	def loadConfig(filename = "todo.cfg.yml")
-		unless File.exists? filename
-			file = File.open(filename, "w") 
-			file << "
+  # TO-DO: Comment load_config
+  def load_config(filename = "todo.cfg.yml")
+    unless File.exists? filename
+      file = File.open(filename, "w") 
+      file << "
 # The filename of the todo file, comment the follow line if no file should be written to.
 filename:           'todo.txt'
 
@@ -109,121 +109,121 @@ include:
     dirs:           []
     paths:          []
 "
-			file.close
-		end
+      file.close
+    end
 
-		return YAML.load_file(filename)
-	end
+    return YAML.load_file(filename)
+  end
 
-	# Tries to read and parse existing tasks in the todo.txt
-	def getExistingTasks()
-		tasks = Array.new
+  # Tries to read and parse existing tasks in the todo.txt
+  def get_existing_tasks
+    tasks = Array.new
 
-		f = File.open(@config['filename'], "r")
-		lines = f.readlines()
-		lines.each do | line |
-			line = line.gsub(/@[^\s]+ /, "") # Remove tags
-			line = line.gsub(/\+[^\s]+ /, "") # Remove projects
-			line = line.gsub(/ \([^\)]*\)$/, "") # Remove location
-			line = line.gsub(/\(.\) /, "") # Remove priority?
-			line = line.gsub("\n", "")
-			matches = line.match(/^[^']*'(.+)'[^']*$/)
+    f = File.open(@config['filename'], "r")
+    lines = f.readlines()
+    lines.each do | line |
+      line = line.gsub(/@[^\s]+ /, "") # Remove tags
+      line = line.gsub(/\+[^\s]+ /, "") # Remove projects
+      line = line.gsub(/ \([^\)]*\)$/, "") # Remove location
+      line = line.gsub(/\(.\) /, "") # Remove priority?
+      line = line.gsub("\n", "")
+      matches = line.match(/^[^']*'(.+)'[^']*$/)
 
-			tasks << matches[1] if matches
-		end
-		f.close
+      tasks << matches[1] if matches
+    end
+    f.close
 
-		return tasks
-	end
+    return tasks
+  end
 
-	# Scans a directory for files containing the todo notations.
-	def scandir(dir)
-		Dir.new(dir).entries.each do | filename |
-			path = dir+"/"+filename
-			print "." if @@debug
-			next unless valid_path?(path)
+  # Scans a directory for files containing the todo notations.
+  def scandir(dir)
+    Dir.new(dir).entries.each do | filename |
+      path = dir+"/"+filename
+      print "." if @@debug
+      next unless valid_path?(path)
 
-			if File.directory? path
-				scandir(path) if @config['recursive']
-				next
-			end
+      if File.directory? path
+        scandir(path) if @config['recursive']
+        next
+      end
 
-			file = File.open(path, "r")
-			lines = file.readlines();
-			print "[" if @@debug
-			lines.each_with_index do | line, linenumber |
-				todo = line.match(@regex)
-				writeEntry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
-				print "!" if @@debug and todo
-			end
-			print "]" if @@debug
-		end
-	end
+      file = File.open(path, "r")
+      lines = file.readlines();
+      print "[" if @@debug
+      lines.each_with_index do | line, linenumber |
+        todo = line.match(@regex)
+        write_entry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
+        print "!" if @@debug and todo
+      end
+      print "]" if @@debug
+    end
+  end
 
-	# Returns true a certain path is valid according to the configured rules.
-	def valid_path?(path)
-		if File.directory? path
-			dirname = File.basename(path)
-			return false if dirname == "." or dirname == ".."
-			return false if excluded?(dirname, @config['exclude']['dirs'])
-			return false if @config['include']['dirs'].count > 0 and not included?(dirname, @config['include']['dirs'])
-			return false if excluded?(path, @config['exclude']['paths'])
-		else
-			filename = (File.directory?(path) ? '' : File.basename(path))
-			return false if excluded?(filename, @config['exclude']['files'])
-			return false if @config['include']['files'].count > 0 and not included?(filename, @config['include']['files'])
-			return false if path[2..-1] == @config['filename']
-			return false if path == "./"+@configfile
-		end
-		return false if @config['include']['paths'].count > 0 and not included?(path, @config['include']['paths'])
-		return false unless File.readable?(path)
-		return true
-	end
+  # Returns true a certain path is valid according to the configured rules.
+  def valid_path?(path)
+    if File.directory? path
+      dirname = File.basename(path)
+      return false if dirname == "." or dirname == ".."
+      return false if excluded?(dirname, @config['exclude']['dirs'])
+      return false if @config['include']['dirs'].count > 0 and not included?(dirname, @config['include']['dirs'])
+      return false if excluded?(path, @config['exclude']['paths'])
+    else
+      filename = (File.directory?(path) ? '' : File.basename(path))
+      return false if excluded?(filename, @config['exclude']['files'])
+      return false if @config['include']['files'].count > 0 and not included?(filename, @config['include']['files'])
+      return false if path[2..-1] == @config['filename']
+      return false if path == "./"+@configfile
+    end
+    return false if @config['include']['paths'].count > 0 and not included?(path, @config['include']['paths'])
+    return false unless File.readable?(path)
+    return true
+  end
 
-	# Returns true if a filename is included by the given exclusion rules
-	def excluded? (filename, excludes)
-		excludes.each do | pattern |
-			return true if filename.match(pattern)
-		end
-		return false
-	end
+  # Returns true if a filename is included by the given exclusion rules
+  def excluded? (filename, excludes)
+    excludes.each do | pattern |
+      return true if filename.match(pattern)
+    end
+    return false
+  end
 
-	# Returns true if a filename is included by the given inclusion rules
-	def included? (filename, includes)
-		includes.each do | pattern |
-			return true if filename.match(pattern)
-		end
-		return false
-	end
+  # Returns true if a filename is included by the given inclusion rules
+  def included? (filename, includes)
+    includes.each do | pattern |
+      return true if filename.match(pattern)
+    end
+    return false
+  end
 
-	# Write a todo.txt-compliant entry to the file stored in @out.
-	# For the format spec, see https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
-	def writeEntry(task, location, line, priority)
-		return if @tasks.include? task
-		return if task.strip.length == 0 # Ignore empty tasks
-		project = File.basename(Dir.getwd)
+  # Write a todo.txt-compliant entry to the file stored in @out.
+  # For the format spec, see https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
+  def write_entry(task, location, line, priority)
+    return if @tasks.include? task
+    return if task.strip.length == 0 # Ignore empty tasks
+    project = File.basename(Dir.getwd)
 
-		replace = @config['location_pattern'][1].gsub("$line", line.to_s)
-		url = location.gsub(Regexp.new(@config['location_pattern'][0]), replace)
+    replace = @config['location_pattern'][1].gsub("$line", line.to_s)
+    url = location.gsub(Regexp.new(@config['location_pattern'][0]), replace)
 
-		@out << "(" << priority << ") " if priority != ""
-		@out << "+" << project << " " if @config['tag_with_project']
-		@config['tags'].each do | tag |
-			tag = tag.gsub(" ", "-")
-			tag = tag.gsub("$filename", File.basename(location))
-			tag = tag.gsub("$directory", File.basename(File.dirname(location)))
-			if File.extname(location) and File.extname(location)[1..-1]
-				tag = tag.gsub("$fileextension", File.extname(location)[1..-1]) 
-			else
-				tag = tag.gsub("$fileextension", File.basename(location))
-			end
-			@out << "@" << tag << " "
-		end
-		@out << "'" << task << "'"
-		@out << " (" << url << ")"
-		@out << "\n"
-		@out.flush
-	end
+    @out << "(" << priority << ") " if priority != ""
+    @out << "+" << project << " " if @config['tag_with_project']
+    @config['tags'].each do | tag |
+      tag = tag.gsub(" ", "-")
+      tag = tag.gsub("$filename", File.basename(location))
+      tag = tag.gsub("$directory", File.basename(File.dirname(location)))
+      if File.extname(location) and File.extname(location)[1..-1]
+        tag = tag.gsub("$fileextension", File.extname(location)[1..-1]) 
+      else
+        tag = tag.gsub("$fileextension", File.basename(location))
+      end
+      @out << "@" << tag << " "
+    end
+    @out << "'" << task.strip << "'"
+    @out << " (" << url << ")"
+    @out << "\n"
+    @out.flush
+  end
 end
 
 # FIX-ME: Support command-line arguments (such as specifying config-file location)
