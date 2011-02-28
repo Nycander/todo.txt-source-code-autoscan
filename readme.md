@@ -22,7 +22,7 @@ For example:
 
     (A) +Deathstar @code-c @laser_controller Make sure laser canon does not overheat. (laser_controller.c)
 
-It also has the capability of just modifying any existing todo.txt file. (Note: Since this program is under development and very untested, it might just ruin your entire todo.txt-file. Use with care!)
+It also has the capability of just modifying any existing todo.txt file. (**Note:** Since this program is under development and very untested, it might just ruin your entire todo.txt-file. _Use with care!_)
 
     (A) Research X-wing fighters
     +Groceries Buy milk
