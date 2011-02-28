@@ -127,11 +127,6 @@ include:
 		return false if @config['include']['paths'].count > 0 and not included?(path, @config['include']['paths'])
 		return false unless File.readable?(path)
 		return true
-
-		puts "'#{path}' '#{filename}' '#{dirname}'"
-		puts "\tOK until inclusion rules"
-		puts "\tOK"
-		return true
 	end
 
 	def scandir(dir)
