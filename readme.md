@@ -12,7 +12,7 @@ Let's say you have some sort of code / text project you are working on, which su
 
 Now, in all these files you maybe are writing stuff like
 
-    // TODO: Make sure laser canon does not overheat.
+    // TODO: Make sure laser cannon does not overheat.
 
 After working for a couple of decades on this project, you probably have a few dozen of these comments laying around (at least I do). 
 
