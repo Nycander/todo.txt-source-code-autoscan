@@ -23,7 +23,7 @@ location_pattern:   ['^.*?/([^/]+/)?([^/]+)$', '...\1\2:$line']
 
 # Define any tags here, defined macros are $filename, $directory, $fileextension
 # Note: Spaces ( ) will be replaced by dashes (-)
-tags:               ['code-$fileextension']
+tags:               ['$fileextension']
 
 # Define exclusions here. All exclusions are regular expressions.
 # 'files' is an array of filenames only, 'dirs' are directory names and 'paths' matches full paths.
