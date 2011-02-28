@@ -1,4 +1,4 @@
-@md 'Make sure laser canon does not overheat.' (...readme.md:15)
 @md 'Find out how git-hooks works and write down how to set it up with todoscan' (...readme.md:46)
 @md 'Find out how svn-hooks works and write down how to set it up with todoscan' (...readme.md:50)
 @md 'Find out how sublime text plugins works and write down how to set it up with todoscan' (...readme.md:54)
+@rb 'Support command-line arguments (such as specifying config-file location)' (...todoscan.rb:227)

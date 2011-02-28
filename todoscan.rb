@@ -198,7 +198,7 @@ include:
 	# For the format spec, see https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
 	def writeEntry(task, location, line, priority)
 		return if @tasks.include? task
-
+		return if task.strip.length == 0 # Ignore empty tasks
 		project = File.basename(Dir.getwd)
 
 		replace = @config['location_pattern'][1].gsub("$line", line.to_s)
@@ -224,6 +224,6 @@ include:
 	end
 end
 
-
+# TO-DO: Support command-line arguments (such as specifying config-file location)
 s = Todoscan.new
 s.run

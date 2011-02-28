@@ -2,10 +2,13 @@
 # The filename of the todo file, comment the follow line if no file should be written to.
 filename:           'todo.txt'
 
+# Set to true if subdirs should be scanned
+recursive:          true
+
 # Todo-keywords are listed here, they are mapped to a priority (you can opt out by specifying an empty string)
 todo_notations:
-                    FIXME:  'A'
-                    TODO:   ''
+                    FIX-ME:  'A' # Hax to avoid parsing any code by mistake
+                    TO-DO:   ''  # Hax to avoid parsing any code by mistake
 
 # If true, the program will write the contents of todo.txt to stdout.
 print_result:       true
@@ -28,7 +31,7 @@ tags:               ['$fileextension']
 # Define exclusions here. All exclusions are regular expressions.
 # 'files' is an array of filenames only, 'dirs' are directory names and 'paths' matches full paths.
 exclude:
-    files:          ['^todoscan.rb$']
+    files:          []
     dirs:           ['.git$', '.svn$']
     paths:          []
 # Inclusions go here. Only files which matches these patterns will be included.

@@ -43,12 +43,12 @@ A file called `todo.cfg.yml` and one called `todo.txt`should have been created. 
 
 ### As a git hook
 
-TODO: Find out how git-hooks works and write down how to set it up with todoscan
+TO-DO: Find out how git-hooks works and write down how to set it up with todoscan
 
 ### As a subversion hook
 
-TODO: Find out how svn-hooks works and write down how to set it up with todoscan
+TO-DO: Find out how svn-hooks works and write down how to set it up with todoscan
 
 ### As a sublime-text plugin
 
-TODO: Find out how sublime text plugins works and write down how to set it up with todoscan
+TO-DO: Find out how sublime text plugins works and write down how to set it up with todoscan
