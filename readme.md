@@ -16,7 +16,7 @@ Now, in all these files you maybe are writing stuff like
 
 After working for a couple of decades on this project, you probably have a few dozen of these comments laying around (at least I do). 
 
-This little utility will find all these comments and compile them into a neat todo.txt-compliant todo.txt file.
+This little utility will find all these comments and compile them into a neat [todo.txt](https://github.com/ginatrapani/todo.txt-cli)-compliant todo.txt file.
 
 For example:
 
