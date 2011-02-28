@@ -1,3 +1,0 @@
-h1. Todo.txt Autoscan Utility for Source Code
-
-TODO: Write stuff here :D
