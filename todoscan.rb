@@ -1,3 +1,4 @@
+require 'optparse'
 require 'yaml'
 
 # The Todoscan program scans directory for TODO-annotations within any specified
@@ -17,37 +18,50 @@ require 'yaml'
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Todoscan
-  @@debug = false    # Set to true if you want to see progress
 
   # Initializes the todo scanner with the correct environment
-  def initialize(directory = ".")
-    @tasks = Array.new
-    @configfile = "todo.cfg.yml"
-    @config = load_config(@configfile)
-    @directory = directory
-    @out = $stdout
+  def initialize(options)
+    @tasks      = Array.new
+    @configfile = options[:config_file]
+    @config     = load_config(@configfile)
+    @directory  = options[:directory]
+    @verbose    = options[:verbose]
+    @recursive  = @config['recursive'] && options[:recursive]
+    @out        = $stdout
 
     keyword_match = @config['todo_notations'].keys.join("|")
     @regex = /(#{keyword_match}):\s+(.*?)$/i
+
+    # User-friendly way of notifying of invalid directory?
+    if not File.readable? @directory
+      $stderr.puts "Error: The specified directory '#{@directory}' can not be read. \nMake sure the directory exists and that you have enough permissions to read it."
+      exit
+    end
   end
 
   # Runs the program itself
   def run
     @tasks = get_existing_tasks unless @config['force_overwrite']
 
+    # Open the file in the correct mode.
     writemode = @config['force_overwrite'] ? "w" : "a+"
     @out = File.open(@config['filename'], writemode) if @config['filename']
 
-    # Scan all directories recursively and output all tasks
+    puts "Scanning directory '#{@directory}' for tasks..." if @verbose
+
+    # Scan all directories recursively? and output all tasks
     scandir(@directory)
 
-    puts "" if @@debug
-
-    # Close the file
+    # We're done writing, close the file.
     @out.close if @config['filename']
 
-    # If specified, print the result
-    print_todo if @config['print_result']
+
+    # Print the result
+    if @verbose
+      puts "\nDone scanning."
+      puts "Result:\n\n"
+      print_todo
+    end
   end
 
   # TO-DO: Comment print_todo
@@ -140,23 +154,23 @@ include:
   def scandir(dir)
     Dir.new(dir).entries.each do | filename |
       path = dir+"/"+filename
-      print "." if @@debug
+      print "." if @verbose
       next unless valid_path?(path)
 
       if File.directory? path
-        scandir(path) if @config['recursive']
+        scandir(path) if @recursive
         next
       end
 
       file = File.open(path, "r")
       lines = file.readlines();
-      print "[" if @@debug
+      print "[" if @verbose
       lines.each_with_index do | line, linenumber |
         todo = line.match(@regex)
         write_entry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
-        print "!" if @@debug and todo
+        print "!" if @verbose and todo
       end
-      print "]" if @@debug
+      print "]" if @verbose
     end
   end
 
@@ -226,6 +240,40 @@ include:
   end
 end
 
-# FIX-ME: Support command-line arguments (such as specifying config-file location)
-s = Todoscan.new
+options = {}
+options[:directory] = "."
+options[:verbose] = false
+options[:recursive] = true
+options[:config_file] = "todo.cfg.yml"
+
+optparse = OptionParser.new do | opts |
+  opts.banner = "Usage: todoscan.rb [options]"
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-c CONFIG_FILE", "--config-file", "Specify where the config file exist, default is '#{options[:configfile]}'.") do | file |
+    options[:config_file] = file
+  end
+
+  opts.on("-d DIR", "--directory", "Specify what directory to scan.") do | dir |
+    options[:directory] = dir
+  end
+
+  opts.on("-R", "--no-recursion", "Only scans the target directory. Overrides config file.") do 
+    options[:recursive] = false
+  end
+
+  opts.on("-v", "--verbose", "Output extra information while running.") do 
+    options[:verbose] = true
+  end
+
+  opts.on("-h", "--help", "Show this message.") do 
+    puts opts
+    exit
+  end
+end
+
+optparse.parse!
+
+s = Todoscan.new(options)
 s.run

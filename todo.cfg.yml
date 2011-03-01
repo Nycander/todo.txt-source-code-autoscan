@@ -10,9 +10,6 @@ todo_notations:
                     FIX-ME:  'A' # Hax to avoid parsing any code by mistake
                     TO-DO:   ''  # Hax to avoid parsing any code by mistake
 
-# If true, the program will write the contents of todo.txt to stdout.
-print_result:       true
-
 # If true the todo file will be overwritten everytime this file is run.
 # If false it will try to detect what todo's already exists and only add new ones
 force_overwrite:    false
