@@ -7,3 +7,4 @@
 (A) @rb 'Comment load_config' (todoscan.rb:66)
 (C) @rb 'Compare this result against the existing todo.txt and figure out what is new, and what has been completed. (Add ability to move completed items onto a changelog of sorts? what does todo.txt do?)' (todoscan.rb:58)
 (A) @rb 'Merely store the result in an array to enable better data handling.' (todoscan.rb:217)
+@md 'Explain/link to how you set up an alias.' (readme.md:60)
