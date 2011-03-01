@@ -251,7 +251,7 @@ optparse = OptionParser.new do | opts |
   opts.separator ""
   opts.separator "Options:"
 
-  opts.on("-c CONFIG_FILE", "--config-file", "Specify where the config file exist, default is '#{options[:configfile]}'.") do | file |
+  opts.on("-c CONFIG_FILE", "--config-file", "Specify where the config file exist, default is '#{options[:config_file]}'.") do | file |
     options[:config_file] = file
   end
 
