@@ -5,6 +5,8 @@ require 'yaml'
 # file. When first run, it will create a config file in the current directory,
 # use it to configure the programs behaviour.
 # 
+# LICENSE:
+#
 # This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -115,12 +117,12 @@ tags:               ['code-$fileextension']
 # 'files' is an array of filenames only, 'dirs' are directory names and 'paths' matches full paths.
 exclude:
     files:          ['^todoscan.rb$']
-    dirs:           ['.git$', '.svn$']
+    dirs:           ['\\.git$', '\\.svn$']
     paths:          []
 # Inclusions go here. Only files which matches these patterns will be included.
 # If no patterns are defined, all files will be included (except for any exclusion rules)
 include:
-    files:          ['.c(pp|c|xx|s)?$', '.d$', '.h$', '.m$', '.php.?$', '.x?html?$', '.xml$', '.js$', '.css$', '.md$', '.textile$', '.java$', '.pl$', '.bat$', '.lua$', '.py.?$', '.rb$', '.sh$']
+    files:          ['\\.c(pp|c|xx|s)?$', '\\.d$', '\\.h$', '\\.m$', '\\.php.?$', '\\.x?html?$', '\\.xml$', '\\.js$', '\\.css$', '\\.md$', '\\.textile$', '\\.java$', '\\.pl$', '\\.bat$', '\\.lua$', '\\.py.?$', '\\.rb$', '\\.sh$']
     dirs:           []
     paths:          []
 "
