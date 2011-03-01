@@ -55,6 +55,7 @@ class Todoscan
     # We're done writing, close the file.
     @out.close if @config['filename']
 
+    # TO-DO: Compare this result against the existing todo.txt and figure out what is new, and what has been completed. (Add ability to move completed items onto a changelog of sorts? what does todo.txt do?)
 
     # Print the result
     if @verbose
@@ -213,7 +214,9 @@ include:
   # Write a todo.txt-compliant entry to the file stored in @out.
   # For the format spec, see https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
   def write_entry(task, location, line, priority)
+    # TO-DO: Merely store the result in an array to enable better data handling.
     return if @tasks.include? task
+
     return if task.strip.length == 0 # Ignore empty tasks
     project = File.basename(Dir.getwd)
 
