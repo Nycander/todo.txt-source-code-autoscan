@@ -122,7 +122,7 @@ exclude:
 # Inclusions go here. Only files which matches these patterns will be included.
 # If no patterns are defined, all files will be included (except for any exclusion rules)
 include:
-    files:          ['\\.c(pp|c|xx|s)?$', '\\.d$', '\\.h$', '\\.m$', '\\.php.?$', '\\.x?html?$', '\\.xml$', '\\.js$', '\\.css$', '\\.md$', '\\.textile$', '\\.java$', '\\.pl$', '\\.bat$', '\\.lua$', '\\.py.?$', '\\.rb$', '\\.sh$']
+    files:          ['\\.c(pp|c|xx|s)?$', '\\.d$', '\\.h$', '\\.m$', '\\.php.?$', '\\.x?html?$', '\\.xml$', '\\.js$', '\\.css$', '\\.md$', '\\.textile$', '\\.java$', '\\.pl$', '\\.bat$', '\\.lua$', '\\.py.?$', '\\.rb$', '\\.sh$', '\\.tex$']
     dirs:           []
     paths:          []
 "
@@ -184,7 +184,7 @@ include:
       end
       print "]" if @verbose
     end
-  end
+  end 
 
   # Returns true a certain path is valid according to the configured rules.
   def valid_path?(path)

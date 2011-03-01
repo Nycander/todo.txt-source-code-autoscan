@@ -41,6 +41,24 @@ If you have any experience with ruby scripts, you should have no problem figurin
 
 A file called `todo.cfg.yml` and one called `todo.txt`should have been created. Open up `todo.cfg.yml` to configure the behaviour.
 
+### Install as an alias
+
+#### Windows
+
+1. Create a file called `todoscan.bat` in a directory of your choice.
+2. Type the following into it: (replace the path with where your todoscan.rb is)
+
+    @echo off
+    ruby "C:\path\to\todoscan.rb" %*
+
+3. [Set your PATH variable](http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx) to include the directory which contains `todoscan.bat` 
+
+Now you can use it by simply opening up a console in the directory you want to autoscan (Shift + Right click -> Open command line here) and type `todoscan` along with any parameters you need.
+
+#### *nix / Mac
+
+TO-DO: Explain/link to how you set up an alias.
+
 ### As a git hook
 
 TO-DO: Find out how git-hooks works and write down how to set it up with todoscan
