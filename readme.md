@@ -49,6 +49,7 @@ A file called `todo.cfg.yml` and one called `todo.txt`should have been created. 
 2. Type the following into it: (replace the path with where your todoscan.rb is)
 
     `@echo off`
+    
     `ruby "C:\path\to\todoscan.rb" %*`
 
 3. [Set your PATH variable](http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx) to include the directory which contains `todoscan.bat` 
