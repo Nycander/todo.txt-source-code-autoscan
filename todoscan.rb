@@ -136,6 +136,8 @@ include:
   def get_existing_tasks
     tasks = Array.new
 
+    return if not File.exists? @config['filename']
+
     f = File.open(@config['filename'], "r")
     lines = f.readlines()
     lines.each do | line |
@@ -156,6 +158,8 @@ include:
   # Scans a directory for files containing the todo notations.
   def scandir(dir)
     Dir.new(dir).entries.each do | filename |
+      next if filename == "." or filename == ".."
+
       path = dir+"/"+filename
       print "." if @verbose
       next unless valid_path?(path)
@@ -169,9 +173,14 @@ include:
       lines = file.readlines();
       print "[" if @verbose
       lines.each_with_index do | line, linenumber |
-        todo = line.match(@regex)
-        write_entry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
-        print "!" if @verbose and todo
+        begin
+          todo = line.match(@regex)
+          write_entry(todo[2], path, linenumber+1, @config['todo_notations'][todo[1]]) if todo
+          print "!" if @verbose and todo
+        rescue ArgumentError => e
+          print "?" if @verbose
+          warn "\nWarning: Failed to parse '#{path}', because: e.message"
+        end
       end
       print "]" if @verbose
     end
@@ -181,7 +190,6 @@ include:
   def valid_path?(path)
     if File.directory? path
       dirname = File.basename(path)
-      return false if dirname == "." or dirname == ".."
       return false if excluded?(dirname, @config['exclude']['dirs'])
       return false if @config['include']['dirs'].count > 0 and not included?(dirname, @config['include']['dirs'])
       return false if excluded?(path, @config['exclude']['paths'])
